@@ -93,25 +93,9 @@ Pages URL and confirming the short SHA matches `git rev-parse HEAD`.
 
 ### Current status
 
-Remote: `git@github.com:hockinghills/emp-app.git`. Pages serves the
-`gh-pages` branch.
-
-GitHub Actions on this account is locked for billing reasons (see
-[EMP-6](/EMP/issues/EMP-6)), so `deploy.yml` is wired but inert. As a
-stopgap, the deploy artifact is published manually:
-
-```bash
-uv run python scripts/build_site.py
-( cd _site && git init -q -b gh-pages && git add . \
-  && git -c user.email=ci@local -c user.name=ci commit -q \
-       -m "Publish $(git -C .. rev-parse --short HEAD)" \
-  && git remote add origin git@github.com:hockinghills/emp-app.git \
-  && git push -f origin gh-pages )
-```
-
-Once EMP-6 unblocks Actions, switch Pages back to **Source: GitHub
-Actions** (`gh api -X POST repos/hockinghills/emp-app/pages -f build_type=workflow`)
-and push-to-main becomes the live path automatically.
+Remote: `git@github.com:hockinghills/emp-app.git`. Pages source is
+**GitHub Actions** — every push to `main` runs `deploy.yml` and
+publishes the built artifact via `actions/deploy-pages`.
 
 ### Health checks
 
