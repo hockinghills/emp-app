@@ -25,6 +25,9 @@ coverage.xml
 # uv
 uv.lock.bak
 
+# Build output (deploy artifact)
+_site/
+
 # Editors / OS
 .vscode/
 .idea/
