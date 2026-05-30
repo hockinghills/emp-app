@@ -42,6 +42,31 @@ def test_landing_bakes_commit_for_verification():
     assert "deadbeefcafe1234" in html_doc
 
 
+def test_landing_has_utm_and_referrer_hidden_inputs():
+    html_doc = render_landing("abc", "t", "v")
+    for name in (
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+        "referrer",
+        "landing_url",
+    ):
+        assert f'name="{name}"' in html_doc, f"missing hidden input: {name}"
+        assert f'id="{name}"' in html_doc, f"missing id for: {name}"
+
+
+def test_landing_script_populates_utm_from_query_and_referrer():
+    html_doc = render_landing("abc", "t", "v")
+    assert "URLSearchParams(window.location.search)" in html_doc
+    assert "document.referrer" in html_doc
+    assert "'utm_source'" in html_doc
+    assert "'utm_medium'" in html_doc
+    assert "'utm_campaign'" in html_doc
+    assert "getElementById('referrer')" in html_doc
+
+
 def test_thanks_has_no_upsell():
     html_doc = render_thanks("abc", "t", "v")
     assert "Thank you" in html_doc

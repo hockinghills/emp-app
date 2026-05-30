@@ -100,6 +100,13 @@ def render_landing(sha: str, build_time: str, version: str) -> str:
         '    <input type="hidden" name="_captcha" value="false">\n'
         f'    <input type="hidden" name="_next" value="{SITE_BASE}/thanks.html">\n'
         '    <input type="hidden" name="_template" value="table">\n'
+        '    <input type="hidden" id="utm_source" name="utm_source" value="">\n'
+        '    <input type="hidden" id="utm_medium" name="utm_medium" value="">\n'
+        '    <input type="hidden" id="utm_campaign" name="utm_campaign" value="">\n'
+        '    <input type="hidden" id="utm_content" name="utm_content" value="">\n'
+        '    <input type="hidden" id="utm_term" name="utm_term" value="">\n'
+        '    <input type="hidden" id="referrer" name="referrer" value="">\n'
+        '    <input type="hidden" id="landing_url" name="landing_url" value="">\n'
         '    <input type="text" name="_honey" style="display:none"\n'
         '      tabindex="-1" autocomplete="off">\n'
         '    <label for="story">Your answer\n'
@@ -120,6 +127,18 @@ def render_landing(sha: str, build_time: str, version: str) -> str:
         f"<code>{html.escape(build_time)}</code> UTC · "
         f"v<code>{html.escape(version)}</code>\n"
         "  </footer>\n"
+        "  <script>(function(){"
+        "var p=new URLSearchParams(window.location.search);"
+        "var keys=['utm_source','utm_medium','utm_campaign','utm_content','utm_term'];"
+        "keys.forEach(function(k){var el=document.getElementById(k);"
+        "if(el){el.value=p.get(k)||'';}});"
+        "var r=document.getElementById('referrer');if(r){r.value=document.referrer||'';}"
+        "var l=document.getElementById('landing_url');"
+        "if(l){l.value=window.location.href||'';}"
+        "var s=p.get('utm_source');"
+        "if(s){var subj=document.querySelector('input[name=\"_subject\"]');"
+        "if(subj){subj.value='EMP landing — '+s;}}"
+        "})();</script>\n"
         f'  <script>fetch("{COUNTER_BEACON}",{{mode:"no-cors"}}).catch(()=>{{}});</script>\n'
         "</body>\n"
         "</html>\n"
