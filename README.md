@@ -64,6 +64,10 @@ See [AGENTS.md](./AGENTS.md) for full conventions.
 
 ## Deploy
 
+Live URL: **https://hockinghills.github.io/emp-app/** — reload and check
+that the short SHA matches `git rev-parse HEAD` to confirm the latest
+push is live.
+
 The smallest deployable artifact is a static page that prints the live
 commit SHA and build time. It is built by `scripts/build_site.py` into
 `_site/index.html`.
@@ -87,13 +91,27 @@ The deployed page shows the `GITHUB_SHA` it was built from, so the path
 from "I made an edit" to "it is live" is verifiable by reloading the
 Pages URL and confirming the short SHA matches `git rev-parse HEAD`.
 
-### One-time setup (pending)
+### Current status
 
-Until the GitHub remote and Pages are wired up, the deploy workflow
-runs nowhere. The CTO has filed a board approval requesting that setup;
-once approved and the remote is added (`git remote add origin …`) and
-Pages is enabled with **Source: GitHub Actions**, pushing to `main`
-deploys automatically.
+Remote: `git@github.com:hockinghills/emp-app.git`. Pages serves the
+`gh-pages` branch.
+
+GitHub Actions on this account is locked for billing reasons (see
+[EMP-6](/EMP/issues/EMP-6)), so `deploy.yml` is wired but inert. As a
+stopgap, the deploy artifact is published manually:
+
+```bash
+uv run python scripts/build_site.py
+( cd _site && git init -q -b gh-pages && git add . \
+  && git -c user.email=ci@local -c user.name=ci commit -q \
+       -m "Publish $(git -C .. rev-parse --short HEAD)" \
+  && git remote add origin git@github.com:hockinghills/emp-app.git \
+  && git push -f origin gh-pages )
+```
+
+Once EMP-6 unblocks Actions, switch Pages back to **Source: GitHub
+Actions** (`gh api -X POST repos/hockinghills/emp-app/pages -f build_type=workflow`)
+and push-to-main becomes the live path automatically.
 
 ### Health checks
 
